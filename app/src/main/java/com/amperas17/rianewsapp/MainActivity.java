@@ -1,10 +1,15 @@
 package com.amperas17.rianewsapp;
 
+import android.content.ContentValues;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,43 +19,50 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
 
     final String LOG_TAG = "myLogs";
+    final static String SAVE_INST_STATE_ACTIONBAR_TITLE = "title";
+
+    final static Integer LOADER_ID = 1;
+    final static Integer INITIAL_DRAWER_POSITION = 0;
 
 
-    private ArrayList<String> mScreenTitles = new ArrayList();
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-
+    private ListView mDrawerListView;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
+    private Boolean mIsJustLaunched = true;
+
+
+    CategoryListItemAdapter mCategoriesAdapter;
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        getSupportActionBar().setTitle(savedInstanceState.getString(SAVE_INST_STATE_ACTIONBAR_TITLE));
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(LOG_TAG, "onCreate");
 
-        mTitle = mDrawerTitle = getTitle();
-        mScreenTitles.add("Главное");
-        mScreenTitles.add("Политика");
-        mScreenTitles.add("Спорт");
+        mTitle = mDrawerTitle = "Categories";
 
-        //mScreenTitles = {"dssdg","sdgdg"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.drawer_list);
+        mDrawerListView = (ListView) findViewById(R.id.drawer_list);
+        mDrawerListView.setOnItemClickListener(new DrawerItemClickListener());
 
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.nav_draw, mScreenTitles));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        //getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#424242")));
 
@@ -67,13 +79,21 @@ public class MainActivity extends AppCompatActivity {
                 supportInvalidateOptionsMenu();
             }
         };
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        //if (savedInstanceState == null) {
-        selectItem(0);
-        //}
 
 
+        if (savedInstanceState == null) {
+            //Set initial NewsListFragment after the launching
+            selectItem(INITIAL_DRAWER_POSITION,AppContract.INITIAL_CATEGORY_NAME,
+                    AppContract.INITIAL_CATEGORY_LINK);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVE_INST_STATE_ACTIONBAR_TITLE, getSupportActionBar().getTitle().toString());
     }
 
     @Override
@@ -81,6 +101,21 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+
+    public void onClickInsert(View v) {
+        ContentValues cv = new ContentValues();
+        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, "header _1");
+        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, "link _1");
+
+        getContentResolver().insert(RiaNewsDBContract.CATEGORY_URI, cv);
+        //Log.d(LOG_TAG, "insert, result Uri : " + newUri.toString());
+    }
+
+    /**
+     * Methods provide drawer functionality
+     *
+     */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,22 +133,36 @@ public class MainActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
+            TextView tvCategoryTitle = (TextView)view.findViewById(R.id.tvCategoryTitle);
+            TextView tvCategoryLink = (TextView)view.findViewById(R.id.tvCategoryLink);
+            Log.d(AppContract.LOG_TAG, "MainActivity[onItemClick]: " +
+                    tvCategoryTitle.getText() + " : " +
+                    tvCategoryLink.getText() );
+
+            selectItem(position,tvCategoryTitle.getText().toString(),tvCategoryLink.getText().toString());
         }
     }
 
-    private void selectItem(int position) {
+    private void selectItem(int position,String categoryName,String categoryLink) {
         Fragment fragment = null;
         fragment = new NewsItemsListFragment();
 
+        Bundle bundle = new Bundle();
+        bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_NAME, categoryName);
+        bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_LINK, categoryLink);
+        fragment.setArguments(bundle);
+        Log.d(AppContract.LOG_TAG, "MainActivity[selectItem]: " + fragment.getArguments());
+
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.frame_for_drawer, fragment)
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frame_for_drawer, fragment)
                     .commit();
 
-            mDrawerList.setItemChecked(position, true);
-            setTitle(mScreenTitles.get(position));
-            mDrawerLayout.closeDrawer(mDrawerList);
+            //mDrawerListView.setItemChecked(position, true);
+            //mDrawerListView.setSelection(position);
+            setTitle(categoryName);
+            mDrawerLayout.closeDrawer(mDrawerListView);
 
         } else {
             throw new ExceptionInInitializerError("MainActivity[selectItem]: fragment is null!");
@@ -138,6 +187,39 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    /**-----------------------------------------------------------*/
 
+
+    /**
+     * CursorLoader gives categories from DB CategoryEntry table to drawerList
+     *---------------------------------------------------------------------------
+     */
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        CursorLoader cursorLoader = new CursorLoader(this, RiaNewsDBContract.CATEGORY_URI, null,
+                null, null, null);
+        Log.d(LOG_TAG,"onCreateLoader");
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+        mCategoriesAdapter = new CategoryListItemAdapter(this,(Cursor) data,0);
+        mDrawerListView.setAdapter(mCategoriesAdapter);
+        Log.d(LOG_TAG, "onLoadFinished " + ((Cursor) data));
+
+        if (mIsJustLaunched){
+            mDrawerListView.setItemChecked(0, true);
+            mIsJustLaunched = false;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+        mCategoriesAdapter.swapCursor(null);
+    }
+
+    /**----------------------------------------------------------------------------*/
 
 }

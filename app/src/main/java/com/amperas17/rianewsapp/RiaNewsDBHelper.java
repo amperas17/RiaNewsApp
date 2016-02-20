@@ -13,12 +13,13 @@ import android.util.Log;
 public class RiaNewsDBHelper extends SQLiteOpenHelper {
     final String LOG_TAG = "myLogs";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "riaNews.db";
+
+
 
     public RiaNewsDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        Log.d(LOG_TAG, "Constructor DBHelper");
     }
 
     @Override
@@ -28,8 +29,8 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + RiaNewsDBContract.CategoryEntry.TABLE_NAME + " (" +
                         RiaNewsDBContract.CategoryEntry._ID + " INTEGER PRIMARY KEY, " +
-                        RiaNewsDBContract.CategoryEntry.COLUMN_NAME + " TEXT UNIQUE NOT NULL, " +
-                        RiaNewsDBContract.CategoryEntry.COLUMN_LINK + " TEXT UNIQUE NOT NULL);"
+                        RiaNewsDBContract.CategoryEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                        RiaNewsDBContract.CategoryEntry.COLUMN_LINK + " TEXT NOT NULL);"
         );
 
         db.execSQL(
@@ -48,7 +49,13 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
         );
 
         ContentValues cv = new ContentValues();
-        for (int i = 1; i <= 2; i++) {
+
+        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, AppContract.INITIAL_CATEGORY_NAME);
+        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, AppContract.INITIAL_CATEGORY_LINK);
+        db.insert(RiaNewsDBContract.CategoryEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
+        for (int i = 1; i <= 3; i++) {
             cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, "name " + i);
             cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, "link " + i);
             db.insert(RiaNewsDBContract.CategoryEntry.TABLE_NAME, null, cv);

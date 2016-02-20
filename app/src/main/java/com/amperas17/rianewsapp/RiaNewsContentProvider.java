@@ -92,10 +92,12 @@ public class RiaNewsContentProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)){
             case CATEGORY:
                 _id = db.insert(RiaNewsDBContract.CategoryEntry.TABLE_NAME, null, values);
+                Log.d(LOG_TAG,"Insert - id= "+_id);
                 if(_id > 0){
                     returnUri =  RiaNewsDBContract.CategoryEntry.buildCategoryUri(_id);
                 } else{
-                    throw new UnsupportedOperationException("[insert(CATEGORY)]Unable to insert rows into: " + uri);
+                    returnUri = Uri.parse("Error");
+                    //throw new UnsupportedOperationException("[insert(CATEGORY)]Unable to insert rows into: " + uri);
                 }
                 break;
             case NEWS_ITEM:

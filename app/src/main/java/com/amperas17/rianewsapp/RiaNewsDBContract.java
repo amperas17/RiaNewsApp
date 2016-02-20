@@ -20,6 +20,12 @@ public class RiaNewsDBContract {
     public static final String PATH_NEWS_CATEGORY = "categoryPath";
     public static final String PATH_NEWS_ITEM = "newsItemPath";
 
+    public static final Uri CATEGORY_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
+            + RiaNewsDBContract.PATH_NEWS_CATEGORY);
+
+    public static final Uri NEWS_ITEM_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
+            + RiaNewsDBContract.PATH_NEWS_ITEM);
+
 
     public static final class CategoryEntry implements BaseColumns {
 

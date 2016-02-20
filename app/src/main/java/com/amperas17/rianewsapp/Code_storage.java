@@ -27,11 +27,11 @@ public final class Code_storage {
         String from[] = { NEWS_ITEM_HEADER, NEWS_ITEM_LINK };
 
         int to[] = { android.R.id.text1, android.R.id.text2 };
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+        SimpleCursorAdapter mCategoriesAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_2, cursor, from, to);
 
         ListView lvContact = (ListView) findViewById(R.id.lvContact);
-        lvContact.setAdapter(adapter);
+        lvContact.setAdapter(mCategoriesAdapter);
     }*/
     /*public void onClickInsert(View v) {
         ContentValues cv = new ContentValues();
