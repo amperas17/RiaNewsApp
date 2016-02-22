@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -18,14 +19,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
 
     final String LOG_TAG = "myLogs";
     final static String SAVE_INST_STATE_ACTIONBAR_TITLE = "title";
+    final static String ACTIONBAR_TITLE = "Новости";
 
     final static Integer LOADER_ID = 1;
     final static Integer INITIAL_DRAWER_POSITION = 0;
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
-    private Boolean mIsJustLaunched = true;
+    private Boolean mIsJustLaunched;
 
 
     CategoryListItemAdapter mCategoriesAdapter;
@@ -55,13 +60,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         Log.d(LOG_TAG, "onCreate");
 
-        mTitle = mDrawerTitle = "Categories";
+        mIsJustLaunched = true;
+
+        //Set StatusBarColor
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor("#323232"));
+        }
+
+        /**--------Drawer functionality-------*/
+        mTitle = mDrawerTitle = ACTIONBAR_TITLE;
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerListView = (ListView) findViewById(R.id.drawer_list);
         mDrawerListView.setOnItemClickListener(new DrawerItemClickListener());
-
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#424242")));
@@ -80,7 +93,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        /**-----------------------------------*/
 
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
         if (savedInstanceState == null) {
             //Set initial NewsListFragment after the launching
@@ -96,12 +111,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         outState.putString(SAVE_INST_STATE_ACTIONBAR_TITLE, getSupportActionBar().getTitle().toString());
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
 
     public void onClickInsert(View v) {
         ContentValues cv = new ContentValues();
@@ -112,10 +121,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //Log.d(LOG_TAG, "insert, result Uri : " + newUri.toString());
     }
 
-    /**
-     * Methods provide drawer functionality
-     *
-     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    /**----------Methods provide drawer functionality------*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -135,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             TextView tvCategoryTitle = (TextView)view.findViewById(R.id.tvCategoryTitle);
             TextView tvCategoryLink = (TextView)view.findViewById(R.id.tvCategoryLink);
+
             Log.d(AppContract.LOG_TAG, "MainActivity[onItemClick]: " +
                     tvCategoryTitle.getText() + " : " +
                     tvCategoryLink.getText() );
@@ -144,28 +158,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void selectItem(int position,String categoryName,String categoryLink) {
-        Fragment fragment = null;
+        Fragment fragment;
         fragment = new NewsItemsListFragment();
 
-        Bundle bundle = new Bundle();
-        bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_NAME, categoryName);
-        bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_LINK, categoryLink);
-        fragment.setArguments(bundle);
-        Log.d(AppContract.LOG_TAG, "MainActivity[selectItem]: " + fragment.getArguments());
-
         if (fragment != null) {
+
+            Bundle bundle = new Bundle();
+            bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_NAME, categoryName);
+            bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_LINK, categoryLink);
+            fragment.setArguments(bundle);
+
+            //Log.d(AppContract.LOG_TAG, "MainActivity[selectItem]: " + fragment.getArguments());
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.frame_for_drawer, fragment)
                     .commit();
 
-            //mDrawerListView.setItemChecked(position, true);
-            //mDrawerListView.setSelection(position);
+            mDrawerListView.setItemChecked(position, true);
             setTitle(categoryName);
             mDrawerLayout.closeDrawer(mDrawerListView);
 
         } else {
             throw new ExceptionInInitializerError("MainActivity[selectItem]: fragment is null!");
+            //Toast.makeText(this,"Something goes wrong! Restart app!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -175,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportActionBar().setTitle(mTitle);
     }
 
+    //Toggle animation
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -186,14 +203,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-
     /**-----------------------------------------------------------*/
 
 
-    /**
-     * CursorLoader gives categories from DB CategoryEntry table to drawerList
-     *---------------------------------------------------------------------------
-     */
+
+
+    /**----CursorLoader gives categories from DB CategoryEntry table to drawerList----*/
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
@@ -209,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mDrawerListView.setAdapter(mCategoriesAdapter);
         Log.d(LOG_TAG, "onLoadFinished " + ((Cursor) data));
 
+        //I think it is crutch, but it works
         if (mIsJustLaunched){
             mDrawerListView.setItemChecked(0, true);
             mIsJustLaunched = false;
@@ -219,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader loader) {
         mCategoriesAdapter.swapCursor(null);
     }
-
     /**----------------------------------------------------------------------------*/
 
 }
