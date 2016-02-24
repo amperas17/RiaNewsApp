@@ -27,4 +27,7 @@ public final class AppContract {
     /*------------------------------------------------*/
 
 
+    static final String RECEIVER_TAG = "receiverTag";
+
+
 }
