@@ -28,7 +28,7 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "CREATE TABLE " + RiaNewsDBContract.CategoryEntry.TABLE_NAME + " (" +
-                        RiaNewsDBContract.CategoryEntry._ID + " INTEGER PRIMARY KEY, " +
+                        RiaNewsDBContract.CategoryEntry.COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         RiaNewsDBContract.CategoryEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                         RiaNewsDBContract.CategoryEntry.COLUMN_LINK + " TEXT NOT NULL);"
         );
@@ -37,7 +37,7 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + RiaNewsDBContract.NewsItemEntry.TABLE_NAME + " (" +
                         RiaNewsDBContract.NewsItemEntry._ID + " INTEGER PRIMARY KEY, " +
                         RiaNewsDBContract.NewsItemEntry.COLUMN_HEADER + " TEXT NOT NULL, " +
-                        RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY + " INTEGER NOT NULL, " +
+                        RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY + " TEXT NOT NULL, " + //" INTEGER NOT NULL, " +
                         RiaNewsDBContract.NewsItemEntry.COLUMN_LINK + " TEXT NOT NULL, " +
                         RiaNewsDBContract.NewsItemEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
                         RiaNewsDBContract.NewsItemEntry.COLUMN_NEWS_TEXT + " TEXT NOT NULL, " +
@@ -45,7 +45,7 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
                         RiaNewsDBContract.NewsItemEntry.COLUMN_IMAGE_SRC + " TEXT NOT NULL, " +
 
                         "FOREIGN KEY (" + RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY + ") " +
-                        "REFERENCES " + RiaNewsDBContract.CategoryEntry.TABLE_NAME + " (" + RiaNewsDBContract.CategoryEntry._ID + "));"
+                        "REFERENCES " + RiaNewsDBContract.CategoryEntry.TABLE_NAME + " (" + RiaNewsDBContract.CategoryEntry.COLUMN_ID + "));"
         );
 
         ContentValues cv = new ContentValues();
@@ -63,10 +63,14 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
         }
         cv.clear();
         Log.d(LOG_TAG, "insert" + cv.toString());
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 7; i++) {
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_HEADER, "header " + i);
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_LINK, "link " + i);
-            cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY, 2);
+            if (i%2==0)
+                cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY, "name "+1);
+            else
+                cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY, "name "+2);
+
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_DESCRIPTION, "desc " + i);
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_NEWS_TEXT, "text " + i);
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_NEWS_DATE, "date " + i);

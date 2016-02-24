@@ -17,6 +17,8 @@ public class RiaNewsContentProvider extends ContentProvider {
     private static final int NEWS_ITEM = 200;
     private static final int NEWS_ITEM_ID = 201;
 
+    private static final int CATEGORIES_NEWS = 300;
+
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -141,7 +143,7 @@ public class RiaNewsContentProvider extends ContentProvider {
                 cursor = db.query(
                         RiaNewsDBContract.CategoryEntry.TABLE_NAME,
                         projection,
-                        RiaNewsDBContract.CategoryEntry._ID + " = ?",
+                        RiaNewsDBContract.CategoryEntry.COLUMN_ID + " = ?",
                         new String[]{String.valueOf(_id)},
                         null,
                         null,
@@ -149,8 +151,17 @@ public class RiaNewsContentProvider extends ContentProvider {
                 );
                 break;
             case NEWS_ITEM:
+                String JoinTable =
+                        RiaNewsDBContract.NewsItemEntry.TABLE_NAME +
+                        " INNER JOIN " +
+                        RiaNewsDBContract.CategoryEntry.TABLE_NAME +
+                        " ON " + RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY +
+                        "=" + RiaNewsDBContract.CategoryEntry.COLUMN_NAME +
+                        //" WHERE "+RiaNewsDBContract.CategoryEntry.COLUMN_NAME+"=\"name 2\"" +
+                        "";
                 cursor = db.query(
-                        RiaNewsDBContract.NewsItemEntry.TABLE_NAME,
+                        //RiaNewsDBContract.NewsItemEntry.TABLE_NAME,
+                        JoinTable,
                         projection,
                         selection,
                         selectionArgs,

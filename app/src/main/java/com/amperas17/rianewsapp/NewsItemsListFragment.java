@@ -32,7 +32,7 @@ public class NewsItemsListFragment extends ListFragment implements LoaderManager
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(AppContract.LOG_TAG, "Frag[onCreate]: ");
         if (savedInstanceState!=null){
             mCategoryName = savedInstanceState.getString(SAVE_INST_STATE_CATEGORY_NAME);
             mCategoryLink = savedInstanceState.getString(SAVE_INST_STATE_CATEGORY_LINK);
@@ -41,16 +41,15 @@ public class NewsItemsListFragment extends ListFragment implements LoaderManager
             mCategoryLink = getArguments().getString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_LINK);
         }
 
-        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-
-
-
-
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        //Log.d(AppContract.LOG_TAG, "Frag[onActivityCreated]");
+
+        getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+
     }
 
     @Override
@@ -67,6 +66,7 @@ public class NewsItemsListFragment extends ListFragment implements LoaderManager
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_items_list, container, false);
+        Log.d(AppContract.LOG_TAG,"Frag[onCreateView]");
 
         mTvmCategoryName = (TextView)view.findViewById(R.id.tvNewsItemCategoryName);
         mTvmCategoryName.setText(mCategoryName);
@@ -76,24 +76,28 @@ public class NewsItemsListFragment extends ListFragment implements LoaderManager
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_news_fragment);
 
-
         return view;
     }
 
 
+    /**----CursorLoader gives newsItems from DB NewsItemsEntry table to Fragment`s list----*/
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        //Log.d(AppContract.LOG_TAG,"Frag[onCreateLoader]");
+
+        String selection = RiaNewsDBContract.CategoryEntry.COLUMN_NAME + "=\""+ mCategoryName+"\"";
+
         CursorLoader cursorLoader = new CursorLoader(getActivity(), RiaNewsDBContract.NEWS_ITEMS_URI, null,
-                null, null, null);
-        Log.d(AppContract.LOG_TAG, "NewsFrag[onCreateLoader]");
+                selection, null, null);
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
         mNewsListItemAdapter = new NewsListItemAdapter(getActivity(),(Cursor) data,0);
+        //Log.d(AppContract.LOG_TAG, "Frag[onLoadFinished] " + ((Cursor) data).getCount());
+
         getListView().setAdapter(mNewsListItemAdapter);
-        Log.d(AppContract.LOG_TAG, "onLoadFinished " + data);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -101,4 +105,7 @@ public class NewsItemsListFragment extends ListFragment implements LoaderManager
     public void onLoaderReset(Loader loader) {
         mNewsListItemAdapter.swapCursor(null);
     }
+
+    /**----------------------------------------------------------------------------*/
+
 }

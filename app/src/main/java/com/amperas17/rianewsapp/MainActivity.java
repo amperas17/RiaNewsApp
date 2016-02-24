@@ -24,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
 
@@ -60,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         Log.d(LOG_TAG, "onCreate");
 
-        mIsJustLaunched = true;
-
         //Set StatusBarColor
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -70,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         /**--------Drawer functionality-------*/
+        mIsJustLaunched = true;
         mTitle = mDrawerTitle = ACTIONBAR_TITLE;
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -114,10 +112,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void onClickInsert(View v) {
         ContentValues cv = new ContentValues();
-        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, "header _1");
-        cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, "link _1");
+        //cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, "header _1");
+        //cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, "link _1");
 
-        getContentResolver().insert(RiaNewsDBContract.CATEGORY_URI, cv);
+        //getContentResolver().insert(RiaNewsDBContract.CATEGORIES_URI, cv);
+
+        cv.clear();
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_HEADER, "header __");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_LINK, "link __");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_CATEGORY, "3");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_DESCRIPTION, "desc __");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_NEWS_TEXT, "text __");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_NEWS_DATE, "date __");
+        cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_IMAGE_SRC, "link __");
+
+        getContentResolver().insert(RiaNewsDBContract.NEWS_ITEMS_URI, cv);
         //Log.d(LOG_TAG, "insert, result Uri : " + newUri.toString());
     }
 
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             bundle.putString(AppContract.NEWS_ITEMS_FRAG_BUNDLE_ARG_CATEGORY_LINK, categoryLink);
             fragment.setArguments(bundle);
 
-            //Log.d(AppContract.LOG_TAG, "MainActivity[selectItem]: " + fragment.getArguments());
+            Log.d(AppContract.LOG_TAG, "MainActivity[selectItem]: " + fragment.getArguments());
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -212,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = new CursorLoader(this, RiaNewsDBContract.CATEGORY_URI, null,
+        CursorLoader cursorLoader = new CursorLoader(this, RiaNewsDBContract.CATEGORIES_URI, null,
                 null, null, null);
         Log.d(LOG_TAG,"onCreateLoader");
         return cursorLoader;
@@ -222,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader loader, Object data) {
         mCategoriesAdapter = new CategoryListItemAdapter(this,(Cursor) data,0);
         mDrawerListView.setAdapter(mCategoriesAdapter);
-        Log.d(LOG_TAG, "onLoadFinished " + ((Cursor) data));
+        Log.d(LOG_TAG, "Main[onLoadFinished] " + ((Cursor) data));
 
         //I think it is crutch, but it works
         if (mIsJustLaunched){

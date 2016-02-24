@@ -20,14 +20,14 @@ public class RiaNewsDBContract {
     public static final String PATH_NEWS_CATEGORY = "categoryPath";
     public static final String PATH_NEWS_ITEM = "newsItemPath";
 
-    public static final Uri CATEGORY_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
+    public static final Uri CATEGORIES_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
             + RiaNewsDBContract.PATH_NEWS_CATEGORY);
 
-    public static final Uri NEWS_ITEM_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
+    public static final Uri NEWS_ITEMS_URI = Uri.parse(RiaNewsDBContract.CONTENT_AUTHORITY + "/"
             + RiaNewsDBContract.PATH_NEWS_ITEM);
 
 
-    public static final class CategoryEntry implements BaseColumns {
+    public static final class CategoryEntry{
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_NEWS_CATEGORY).build();
@@ -39,8 +39,10 @@ public class RiaNewsDBContract {
 
         public static final String TABLE_NAME = "categoriesTable";
 
+        public static final String COLUMN_ID = "_id";
         public static final String COLUMN_NAME = "categoryName";
         public static final String COLUMN_LINK = "categoryLink";
+
 
 
         public static Uri buildCategoryUri(long id){
