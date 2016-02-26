@@ -21,12 +21,26 @@ public class GettingDataService extends IntentService {
         if (intent != null) {
             ResultReceiver receiver = intent.getParcelableExtra(AppContract.RECEIVER_TAG);
             String categoryName = intent.getStringExtra(RiaNewsDBContract.CategoryEntry.COLUMN_NAME);
-            Log.d(AppContract.LOG_TAG,"GettingDataService[onHandleIntent]: "+categoryName);
-            //String content = GetHttpContent.getContent(path);
+            String categoryLink = intent.getStringExtra(RiaNewsDBContract.CategoryEntry.COLUMN_LINK);
+            Log.d(AppContract.LOG_TAG,"GettingDataService[onHandleIntent]: "+categoryName+" "+categoryLink);
+            //-------------------------------------------------------//
 
+            getData(categoryName,categoryLink);
+
+            //-------------------------------------------------------//
             Bundle bundle = new Bundle();
             //bundle.putString(AppContract.HTML_CONTENT_TAG,content);
             receiver.send(0, bundle);
         }
     }
+
+
+
+    private void getData(String categoryName,String categoryLink){
+
+
+    }
+
+
+
 }

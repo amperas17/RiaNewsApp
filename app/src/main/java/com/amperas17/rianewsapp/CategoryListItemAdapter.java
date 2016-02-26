@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * Created by Вова on 18.02.2016.
+ * Adapter with mCategories for drawerList;
  */
 public class CategoryListItemAdapter extends CursorAdapter {
 
@@ -26,10 +26,10 @@ public class CategoryListItemAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        TextView tvTitle = (TextView)view.findViewById(R.id.tvCategoryTitle);
+        TextView tvTitle = (TextView)view.findViewById(R.id.tv_category_name);
         tvTitle.setText(""+cursor.getString(cursor.getColumnIndex(RiaNewsDBContract.CategoryEntry.COLUMN_NAME)));
 
-        TextView tvLink = (TextView)view.findViewById(R.id.tvCategoryLink);
+        TextView tvLink = (TextView)view.findViewById(R.id.tv_category_link);
         tvLink.setText(""+cursor.getString(cursor.getColumnIndex(RiaNewsDBContract.CategoryEntry.COLUMN_LINK)));
 
     }

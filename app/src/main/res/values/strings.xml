@@ -3,8 +3,9 @@
 
     <string name="action_settings">Settings</string>
 
-
-
     <string name="drawer_open">Открыть navigation drawer</string>
     <string name="drawer_close">Закрыть navigation drawer</string>
+
+    <string name="service_running_message">Service is already running!</string>
+    <string name="no_internet_message">There is no internet connection!</string>
 </resources>

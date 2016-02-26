@@ -13,7 +13,7 @@ import android.util.Log;
 public class RiaNewsDBHelper extends SQLiteOpenHelper {
     final String LOG_TAG = "myLogs";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "riaNews.db";
 
 
@@ -24,7 +24,7 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(LOG_TAG, "onCreate DBHelper");
+        //Log.d(LOG_TAG, "onCreate DBHelper");
 
         db.execSQL(
                 "CREATE TABLE " + RiaNewsDBContract.CategoryEntry.TABLE_NAME + " (" +
@@ -55,14 +55,7 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
         db.insert(RiaNewsDBContract.CategoryEntry.TABLE_NAME, null, cv);
         cv.clear();
 
-        for (int i = 1; i <= 3; i++) {
-            cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, "name " + i);
-            cv.put(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, "link " + i);
-            db.insert(RiaNewsDBContract.CategoryEntry.TABLE_NAME, null, cv);
-            Log.d(LOG_TAG, "insert" + cv.toString());
-        }
-        cv.clear();
-        Log.d(LOG_TAG, "insert" + cv.toString());
+        /*
         for (int i = 1; i <= 7; i++) {
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_HEADER, "header " + i);
             cv.put(RiaNewsDBContract.NewsItemEntry.COLUMN_LINK, "link " + i);
@@ -79,7 +72,8 @@ public class RiaNewsDBHelper extends SQLiteOpenHelper {
 
             Log.d(LOG_TAG,"insert"+cv.toString());
             db.insert(RiaNewsDBContract.NewsItemEntry.TABLE_NAME, null, cv);
-        }
+        }*/
+
     }
 
     @Override

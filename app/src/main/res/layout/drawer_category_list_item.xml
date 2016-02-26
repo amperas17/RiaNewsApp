@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/tvCategoryTitle"
+        android:id="@+id/tv_category_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/drawer_list_selector"
@@ -21,7 +21,7 @@
         />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/tvCategoryLink"
+        android:id="@+id/tv_category_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

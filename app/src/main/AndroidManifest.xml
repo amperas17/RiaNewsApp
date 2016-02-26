@@ -32,6 +32,10 @@
             android:name=".GettingDataService"
             android:exported="false" >
         </service>
+        <service
+            android:name=".GettingCategoriesService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

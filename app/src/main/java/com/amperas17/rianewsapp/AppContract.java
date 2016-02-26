@@ -21,7 +21,7 @@ public final class AppContract {
      *  to CategoryEntry table in it`s onCreate() ;
      */
     final static String INITIAL_CATEGORY_NAME = "Главное";
-    final static String INITIAL_CATEGORY_LINK = "todoLink";
+    final static String INITIAL_CATEGORY_LINK = "http://ria.ru/lenta/";
 
 
     /*------------------------------------------------*/

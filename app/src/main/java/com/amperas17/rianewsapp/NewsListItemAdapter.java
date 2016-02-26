@@ -1,6 +1,5 @@
 package com.amperas17.rianewsapp;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 /**
  * Adapter with newsItems data for NewsItemsFragment list;
  */
+
 public class NewsListItemAdapter extends CursorAdapter {
     public NewsListItemAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, 0);
@@ -44,19 +44,6 @@ public class NewsListItemAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        /*ImageView ivImage = (ImageView)view.findViewById(R.id.iv_news_list_item_image);
-
-        TextView tvHeader = (TextView)view.findViewById(R.id.tv_news_list_item_header);
-        tvHeader.setText(cursor.getString(cursor
-                .getColumnIndex(RiaNewsDBContract.NewsItemEntry.COLUMN_HEADER)));
-
-        TextView tvDescription = (TextView)view.findViewById(R.id.tv_news_list_item_description);
-        tvDescription.setText(cursor.getString(cursor
-                .getColumnIndex(RiaNewsDBContract.NewsItemEntry.COLUMN_DESCRIPTION)));
-
-        TextView tvLink = (TextView)view.findViewById(R.id.tv_news_list_item_link);
-        tvLink.setText(cursor.getString(cursor
-                .getColumnIndex(RiaNewsDBContract.NewsItemEntry.COLUMN_LINK)));*/
 
         ViewHolder holder = (ViewHolder)view.getTag();
         if (holder != null){
@@ -68,8 +55,6 @@ public class NewsListItemAdapter extends CursorAdapter {
             holder.tvLink.setText(cursor.getString(cursor
                     .getColumnIndex(RiaNewsDBContract.NewsItemEntry.COLUMN_LINK)));
         }
-
-
     }
 
     public static class ViewHolder {

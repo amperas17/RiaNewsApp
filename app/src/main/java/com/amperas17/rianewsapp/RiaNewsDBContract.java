@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 /**
  * RiaNewsDBContract describes static fields of riaNewsDatabase.
  *
- * CategoryEntry consists of news categories columns.
+ * CategoryEntry consists of news mCategories columns.
  * NewsItemEntry consists of news items columns.
  */
 

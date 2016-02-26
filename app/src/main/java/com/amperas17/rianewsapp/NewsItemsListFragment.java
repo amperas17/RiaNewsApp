@@ -30,8 +30,6 @@ public class NewsItemsListFragment extends ListFragment
 
     String mCategoryName;
     String mCategoryLink;
-    TextView mTvmCategoryLink;
-    TextView mTvmCategoryName;
     ProgressBar progressBar;
 
     NewsListItemAdapter mNewsListItemAdapter;
@@ -43,7 +41,7 @@ public class NewsItemsListFragment extends ListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(AppContract.LOG_TAG, "Frag[onCreate]: ");
+        //Log.d(AppContract.LOG_TAG, "Frag[onCreate]: ");
         if (savedInstanceState!=null){
             mCategoryName = savedInstanceState.getString(SAVE_INST_STATE_CATEGORY_NAME);
             mCategoryLink = savedInstanceState.getString(SAVE_INST_STATE_CATEGORY_LINK);
@@ -70,13 +68,8 @@ public class NewsItemsListFragment extends ListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_items_list, container, false);
-        Log.d(AppContract.LOG_TAG,"Frag[onCreateView]");
+        //Log.d(AppContract.LOG_TAG,"Frag[onCreateView]");
 
-        mTvmCategoryName = (TextView)view.findViewById(R.id.tvNewsItemCategoryName);
-        mTvmCategoryName.setText(mCategoryName);
-
-        mTvmCategoryLink = (TextView)view.findViewById(R.id.tvNewsItemCategoryLink);
-        mTvmCategoryLink.setText(mCategoryLink);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_news_fragment);
 
@@ -95,8 +88,6 @@ public class NewsItemsListFragment extends ListFragment
     private void refreshData(){
         if (isNetworkConnected()) {
             if (!mIsServiceRunning) {
-                Log.d(AppContract.LOG_TAG,"Frag[refreshData]: ");
-
                 mDataReceiver = new DataReceiver(new Handler());
 
                 mDataReceiver.setReceiver(this);
@@ -104,13 +95,11 @@ public class NewsItemsListFragment extends ListFragment
                 Intent intent = new Intent(getActivity(), GettingDataService.class);
                 intent.putExtra(RiaNewsDBContract.CategoryEntry.COLUMN_NAME, mCategoryName);
                 intent.putExtra(RiaNewsDBContract.CategoryEntry.COLUMN_LINK, mCategoryLink);
-                Log.d(AppContract.LOG_TAG, "Frag[refreshData]: " + intent.toString());
+                Log.d(AppContract.LOG_TAG, "Frag[refreshData]: ");
 
                 intent.putExtra(AppContract.RECEIVER_TAG, mDataReceiver);
                 getActivity().startService(intent);
                 mIsServiceRunning = true;
-                Log.d(AppContract.LOG_TAG, "Frag[refreshData]: startService");
-
 
             } else {
                 Toast.makeText(getActivity(), R.string.service_running_message, Toast.LENGTH_SHORT).show();
@@ -122,12 +111,15 @@ public class NewsItemsListFragment extends ListFragment
 
 
 
+
+
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
         mIsServiceRunning = false;
         Log.d(AppContract.LOG_TAG,"Frag[onReceiveResult]: ");
-
     }
+
+
 
     private boolean isNetworkConnected() {
         ConnectivityManager manager = (ConnectivityManager)
@@ -137,7 +129,6 @@ public class NewsItemsListFragment extends ListFragment
 
         return (networkInfo==null?false:true);
     }
-
 
 
     /**----CursorLoader gives newsItems from DB NewsItemsEntry table to Fragment`s list----*/

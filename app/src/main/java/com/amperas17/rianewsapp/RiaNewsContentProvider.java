@@ -53,9 +53,12 @@ public class RiaNewsContentProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)){
             case CATEGORY:
                 rows = db.delete(RiaNewsDBContract.CategoryEntry.TABLE_NAME, selection, selectionArgs);
+                Log.d(AppContract.LOG_TAG,"deleted "+ rows + " Category ");
                 break;
             case NEWS_ITEM:
                 rows = db.delete(RiaNewsDBContract.NewsItemEntry.TABLE_NAME, selection, selectionArgs);
+                Log.d(AppContract.LOG_TAG,"deleted NewsItem"+rows);
+
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
